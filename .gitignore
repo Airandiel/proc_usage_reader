@@ -1,0 +1,8 @@
+/.vscode
+/CMakeCache.txt
+/CMakeFiles
+/build
+/cmake_install.cmake
+/log.txt
+/log1.txt
+*/CMakeFiles/*
