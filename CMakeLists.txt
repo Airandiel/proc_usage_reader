@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(ProcUsage LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
+set(CMAKE_C_FLAGS_INIT -g)
 # Find the pthread library
 find_package(Threads REQUIRED)
 add_subdirectory(libraries)

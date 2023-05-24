@@ -152,6 +152,60 @@ logger.c.s:
 	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/logger.c.s
 .PHONY : logger.c.s
 
+queue.o: queue.c.o
+
+.PHONY : queue.o
+
+# target to build an object file
+queue.c.o:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/queue.c.o
+.PHONY : queue.c.o
+
+queue.i: queue.c.i
+
+.PHONY : queue.i
+
+# target to preprocess a source file
+queue.c.i:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/queue.c.i
+.PHONY : queue.c.i
+
+queue.s: queue.c.s
+
+.PHONY : queue.s
+
+# target to generate assembly for a file
+queue.c.s:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/queue.c.s
+.PHONY : queue.c.s
+
+reader.o: reader.c.o
+
+.PHONY : reader.o
+
+# target to build an object file
+reader.c.o:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/reader.c.o
+.PHONY : reader.c.o
+
+reader.i: reader.c.i
+
+.PHONY : reader.i
+
+# target to preprocess a source file
+reader.c.i:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/reader.c.i
+.PHONY : reader.c.i
+
+reader.s: reader.c.s
+
+.PHONY : reader.s
+
+# target to generate assembly for a file
+reader.c.s:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/reader.c.s
+.PHONY : reader.c.s
+
 watchdog.o: watchdog.c.o
 
 .PHONY : watchdog.o
@@ -191,6 +245,12 @@ help:
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"
+	@echo "... queue.o"
+	@echo "... queue.i"
+	@echo "... queue.s"
+	@echo "... reader.o"
+	@echo "... reader.i"
+	@echo "... reader.s"
 	@echo "... watchdog.o"
 	@echo "... watchdog.i"
 	@echo "... watchdog.s"

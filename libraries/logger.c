@@ -36,7 +36,6 @@ void* logger_thread_func(void* arg) {
             time_t now = time(NULL);
             char time_str[MAX_LOG_LENGTH];
 
-            printf("Printing to file\n");
             strftime(time_str, sizeof(time_str), "[%Y-%m-%d %H:%M:%S]",
                      localtime(&now));
             fprintf(logger->log_file, "%s [%s] %s\n", time_str,
@@ -44,10 +43,9 @@ void* logger_thread_func(void* arg) {
             fflush(logger->log_file);
         }
         pthread_mutex_unlock(&logger->mutex);
-
-        free(log_msg);
     }
 
+    free(log_msg);
     pthread_mutex_unlock(&logger->mutex);
     pthread_exit(NULL);
 }
@@ -60,7 +58,7 @@ struct logger_thread* logger_create_thread(const char* log_file_path) {
 
     logger->log_file = fopen(log_file_path, "a");
     if (!logger->log_file) {
-        fprintf(stderr, "Error: could not open log file %s\n", log_file_path);
+        printf("Error: could not open log file %s\n", log_file_path);
         free(logger);
         return NULL;
     }
@@ -79,12 +77,11 @@ struct logger_thread* logger_create_thread(const char* log_file_path) {
     int result = pthread_create(&logger->thread, NULL, logger_thread_func,
                                 (void*)logger);
     if (result) {
-        fprintf(stderr, "Error: could not create logger thread\n");
-
-        printf("ERROR");
+        printf("Error: couldn't create logger thread\n");
         logger_destroy_thread(logger);
         return NULL;
     }
+    printf("HMM3 \n");
 
     return logger;
 }
@@ -112,6 +109,7 @@ void log_message(struct logger_thread* logger, const char* module_name,
 
     pthread_mutex_lock(&logger->mutex_queue);
     TAILQ_INSERT_TAIL(&logger->log_queue, log_msg, entries);
+    // free(log_msg);
     pthread_mutex_unlock(&logger->mutex_queue);
 
     pthread_mutex_lock(&logger->mutex);
