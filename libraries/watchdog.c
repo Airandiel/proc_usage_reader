@@ -46,7 +46,7 @@ static void* watchdog_thread_func(void* arg) {
     pthread_exit(NULL);
 }
 
-void* watchdog_create(struct logger_thread* logger, pthread_cond_t stop_cond) {
+void* watchdog_create(LoggerThread* logger, pthread_cond_t stop_cond) {
     struct watchdog* watchdog =
         (struct watchdog*)malloc(sizeof(struct watchdog));
 

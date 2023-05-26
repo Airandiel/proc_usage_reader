@@ -8,7 +8,7 @@
 #include "queue.h"
 
 Reader* reader_create(const char* filename, Queue* queue,
-                      struct logger_thread* logger) {
+                      LoggerThread* logger) {
     Reader* reader = (Reader*)malloc(sizeof(Reader));
     if (reader == NULL) {
         log_message(logger, "Reader", "Error during reader memory allocation");
@@ -71,11 +71,12 @@ void* reader_thread_func(void* arg) {
                     break;
                 }
 
-                char str[30];
-                sprintf(str, "Read line: CPU%d, %s", stats_counter, line);
-                log_message(reader->logger, "INFO: Reader", str);
+                // char str[30];
+                // sprintf(str, "Read line: CPU%d, %s", stats_counter, line);
+                // log_message(reader->logger, "INFO: Reader", str);
             }
         }
+        cpu_data.no_lines = stats_counter;
         // send data using queue
         queue_enqueue(reader->queue, (void*)&cpu_data);
 

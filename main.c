@@ -8,13 +8,14 @@
 #include <time.h>
 #include <unistd.h>
 
+#include "analyser.h"
 #include "logger.h"
 #include "reader.h"
 
 volatile sig_atomic_t done = 0;
 
 volatile bool flag_running = true;
-struct logger_thread* logger;
+LoggerThread* logger;
 struct watchdog* watchdog;
 pthread_cond_t stop_cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t stop_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -57,20 +58,24 @@ int main() {
 
     queue = queue_init(logger);
     Reader* reader = reader_create("/proc/stat", queue, logger);
+    AnalyserData* analyser = analyser_create(queue, logger);
+
     pthread_t reader_thread = reader_start(reader);
+    pthread_t analyser_thread = analyser_start(analyser);
     int counter = 0;
     while (counter < 5) {
         int t = sleep(1);
-        ReaderData* cpu_stats = malloc(sizeof(ReaderData));
-        queue_dequeue(queue, (void**)&cpu_stats);
-        if (cpu_stats != NULL) {
-            process_cpu_stats(cpu_stats);
-        }
+        // ReaderData* cpu_stats = malloc(sizeof(ReaderData));
+        // queue_dequeue(queue, (void**)&cpu_stats);
+        // if (cpu_stats != NULL) {
+        //     process_cpu_stats(cpu_stats);
+        // }
         counter++;
         printf("Waiting ended %d\n", counter);
     }
 
     reader->running = 0;
+    analyser_stop(analyser, analyser_thread);
 
     pthread_join(reader_thread, NULL);
 

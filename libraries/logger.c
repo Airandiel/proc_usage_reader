@@ -1,10 +1,9 @@
 #include "logger.h"
 
-#include <errno.h>
 #include <time.h>
 
 void* logger_thread_func(void* arg) {
-    struct logger_thread* logger = (struct logger_thread*)arg;
+    LoggerThread* logger = (LoggerThread*)arg;
     struct log_message* log_msg;
 
     while (logger->running) {
@@ -50,11 +49,8 @@ void* logger_thread_func(void* arg) {
     pthread_exit(NULL);
 }
 
-struct logger_thread* logger_create_thread(const char* log_file_path) {
-    struct logger_thread* logger =
-        (struct logger_thread*)malloc(sizeof(struct logger_thread));
-
-    printf("HMM2 \n");
+LoggerThread* logger_create_thread(const char* log_file_path) {
+    LoggerThread* logger = (LoggerThread*)malloc(sizeof(LoggerThread));
 
     logger->log_file = fopen(log_file_path, "a");
     if (!logger->log_file) {
@@ -81,12 +77,11 @@ struct logger_thread* logger_create_thread(const char* log_file_path) {
         logger_destroy_thread(logger);
         return NULL;
     }
-    printf("HMM3 \n");
 
     return logger;
 }
 
-void logger_destroy_thread(struct logger_thread* logger) {
+void logger_destroy_thread(LoggerThread* logger) {
     logger->running = false;
     pthread_cond_signal(&logger->cond);
     pthread_join(logger->thread, NULL);
@@ -100,7 +95,7 @@ void logger_destroy_thread(struct logger_thread* logger) {
     free(logger);
 }
 
-void log_message(struct logger_thread* logger, const char* module_name,
+void log_message(LoggerThread* logger, const char* module_name,
                  const char* message) {
     struct log_message* log_msg =
         (struct log_message*)malloc(sizeof(struct log_message));
@@ -109,15 +104,9 @@ void log_message(struct logger_thread* logger, const char* module_name,
 
     pthread_mutex_lock(&logger->mutex_queue);
     TAILQ_INSERT_TAIL(&logger->log_queue, log_msg, entries);
-    // free(log_msg);
     pthread_mutex_unlock(&logger->mutex_queue);
 
     pthread_mutex_lock(&logger->mutex);
     pthread_cond_signal(&logger->cond);
     pthread_mutex_unlock(&logger->mutex);
-}
-
-void logger_add_watchdog(struct logger_thread* logger,
-                         struct watchdog* watchdog) {
-    logger->watchdog = watchdog;
 }

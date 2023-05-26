@@ -125,6 +125,33 @@ util_lib/fast:
 	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/build
 .PHONY : util_lib/fast
 
+analyser.o: analyser.c.o
+
+.PHONY : analyser.o
+
+# target to build an object file
+analyser.c.o:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/analyser.c.o
+.PHONY : analyser.c.o
+
+analyser.i: analyser.c.i
+
+.PHONY : analyser.i
+
+# target to preprocess a source file
+analyser.c.i:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/analyser.c.i
+.PHONY : analyser.c.i
+
+analyser.s: analyser.c.s
+
+.PHONY : analyser.s
+
+# target to generate assembly for a file
+analyser.c.s:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/analyser.c.s
+.PHONY : analyser.c.s
+
 logger.o: logger.c.o
 
 .PHONY : logger.o
@@ -242,6 +269,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... util_lib"
 	@echo "... edit_cache"
+	@echo "... analyser.o"
+	@echo "... analyser.i"
+	@echo "... analyser.s"
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"

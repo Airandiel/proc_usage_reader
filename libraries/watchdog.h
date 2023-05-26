@@ -4,6 +4,8 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+#include "logger.h"
+
 #define MAX_THREADS 10
 #define TIMEOUT 2
 
@@ -16,7 +18,7 @@ struct thread_info {
 
 struct watchdog {
     struct thread_info threads[MAX_THREADS];
-    struct logger_thread* logger;
+    LoggerThread* logger;
     int num_threads;
     pthread_mutex_t mutex;
     bool running;
@@ -24,7 +26,7 @@ struct watchdog {
     pthread_cond_t stop_cond;
 };
 
-void* watchdog_create(struct logger_thread* logger, pthread_cond_t stop_cond);
+void* watchdog_create(LoggerThread* logger, pthread_cond_t stop_cond);
 
 void watchdog_add_thread(void* watchdog, int type, char name[20],
                          int thread_id);

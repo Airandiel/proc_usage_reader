@@ -1,23 +1,12 @@
+#include "queue.h"
+
 #include <pthread.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "logger.h"
 
-typedef struct Node {
-    void* data;
-    struct Node* next;
-} Node;
-
-typedef struct Queue {
-    Node* head;
-    Node* tail;
-    pthread_mutex_t mutex;
-    struct logger_thread* logger;
-} Queue;
-
-Queue* queue_init(struct logger_thread* logger) {
+Queue* queue_init(LoggerThread* logger) {
     Queue* queue = (Queue*)malloc(sizeof(Queue));
     queue->head = NULL;
     queue->tail = NULL;
