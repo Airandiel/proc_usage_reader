@@ -9,6 +9,8 @@ set(LIB_FILES
     reader.h 
     analyser.c 
     analyser.h
+    printer.c
+    printer.h
 )
 
 add_library(util_lib STATIC ${LIB_FILES})

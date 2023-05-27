@@ -179,6 +179,33 @@ logger.c.s:
 	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/logger.c.s
 .PHONY : logger.c.s
 
+printer.o: printer.c.o
+
+.PHONY : printer.o
+
+# target to build an object file
+printer.c.o:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/printer.c.o
+.PHONY : printer.c.o
+
+printer.i: printer.c.i
+
+.PHONY : printer.i
+
+# target to preprocess a source file
+printer.c.i:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/printer.c.i
+.PHONY : printer.c.i
+
+printer.s: printer.c.s
+
+.PHONY : printer.s
+
+# target to generate assembly for a file
+printer.c.s:
+	cd /mnt/d/Michal_share/projectsCPP/processor_usage && $(MAKE) -f libraries/CMakeFiles/util_lib.dir/build.make libraries/CMakeFiles/util_lib.dir/printer.c.s
+.PHONY : printer.c.s
+
 queue.o: queue.c.o
 
 .PHONY : queue.o
@@ -275,6 +302,9 @@ help:
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"
+	@echo "... printer.o"
+	@echo "... printer.i"
+	@echo "... printer.s"
 	@echo "... queue.o"
 	@echo "... queue.i"
 	@echo "... queue.s"

@@ -33,10 +33,16 @@ pthread_t reader_start(Reader* reader) {
                     "Error: Failed to create reader thread\n");
         return 1;
     }
+    reader->thread = reader_thread;
     return (reader_thread);
 }
 
-void reader_destroy(Reader* reader) { free(reader); }
+void reader_destroy(Reader* reader) {
+    reader->running = false;
+    pthread_cancel(reader->thread);
+    pthread_join(reader->thread, NULL);
+    free(reader);
+}
 
 void* reader_thread_func(void* arg) {
     Reader* reader = (Reader*)arg;

@@ -3,6 +3,8 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
+#include <time.h>
 
 #include "logger.h"
 
@@ -12,15 +14,17 @@ Queue* queue_init(LoggerThread* logger) {
     queue->tail = NULL;
     pthread_mutex_init(&queue->mutex, NULL);
     queue->logger = logger;
+    pthread_mutex_init(&queue->cond_mutex, NULL);
+    pthread_cond_init(&queue->cond, NULL);
     return queue;
 }
 
-void queue_enqueue(Queue* queue, void* data) {
+bool queue_enqueue(Queue* queue, void* data) {
     Node* newNode = (Node*)malloc(sizeof(Node));
     if (newNode == NULL) {
         log_message(queue->logger, "Queue",
                     "ERROR: Failed to allocate memory for new node");
-        return;
+        return false;
     }
 
     newNode->data = data;
@@ -39,6 +43,7 @@ void queue_enqueue(Queue* queue, void* data) {
     }
     pthread_mutex_unlock(&queue->mutex);
     log_message(queue->logger, "Queue", "INFO: Enqueued data");
+    return true;
 }
 
 bool queue_dequeue(Queue* queue, void** data) {
@@ -70,6 +75,41 @@ bool queue_dequeue(Queue* queue, void** data) {
     return true;
 }
 
+bool queue_sig_dequeue(Queue* queue, void** data) {
+    struct timespec timeout;
+    struct timeval now;
+
+    // Calculate the absolute timeout value
+    // gettimeofday(&now, NULL);
+    // timeout.tv_sec = now.tv_sec + 2;
+
+    clock_gettime(CLOCK_REALTIME, &timeout);
+    timeout.tv_sec += 2;
+
+    pthread_mutex_lock(&queue->cond_mutex);
+    int result =
+        pthread_cond_timedwait(&queue->cond, &queue->cond_mutex, &timeout);
+    bool dequeue_res = false;
+    if (result == 0) {
+        while (!queue_is_empty(queue)) {
+            dequeue_res = queue_dequeue(queue, data);
+        }
+    }
+    pthread_mutex_unlock(&queue->cond_mutex);
+    return dequeue_res;
+}
+
+bool queue_sig_enqueue(Queue* queue, void* data) {
+    bool result = queue_enqueue(queue, data);
+    if (result) {
+        pthread_cond_signal(&queue->cond);
+        printf("Enqueueuing and sending signal\n");
+        return true;
+    } else {
+        return false;
+    }
+}
+
 bool queue_is_empty(Queue* queue) {
     pthread_mutex_lock(&queue->mutex);
     bool isEmpty = (queue->head == NULL);
@@ -79,6 +119,7 @@ bool queue_is_empty(Queue* queue) {
 }
 
 void queue_destroy(Queue* queue) {
+    pthread_cond_signal(&queue->cond);
     pthread_mutex_lock(&queue->mutex);
 
     Node* current = queue->head;
@@ -95,4 +136,5 @@ void queue_destroy(Queue* queue) {
 
     pthread_mutex_unlock(&queue->mutex);
     pthread_mutex_destroy(&queue->mutex);
+    pthread_cond_destroy(&queue->cond);
 }

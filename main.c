@@ -10,6 +10,7 @@
 
 #include "analyser.h"
 #include "logger.h"
+#include "printer.h"
 #include "reader.h"
 
 volatile sig_atomic_t done = 0;
@@ -19,7 +20,10 @@ LoggerThread* logger;
 struct watchdog* watchdog;
 pthread_cond_t stop_cond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t stop_mutex = PTHREAD_MUTEX_INITIALIZER;
-Queue* queue;
+Queue *queue, printer_queue;
+Reader* reader;
+AnalyserData* analyser;
+Printer* printer;
 
 void term(int signum) {
     done = 1;
@@ -41,12 +45,23 @@ void* printing_thread(char* message) {
     printf("%s", message);
 }
 
+void quit_program(int signal) {
+    reader->running = 0;
+    analyser_destroy(analyser);
+    printer_destroy(printer);
+
+    reader_destroy(reader);
+    queue_destroy(queue);
+
+    logger_destroy_thread(logger);
+}
+
 int main() {
     // struct sigaction action;
     // memset(&action, 0, sizeof(struct sigaction));
     // action.sa_handler = term;
-    // sigaction(SIGTERM, &action, NULL);
-    // sigaction(SIGQUIT, &action, NULL);
+    signal(SIGTERM, quit_program);
+    signal(SIGQUIT, quit_program);
 
     // pthread_t thread_id;
     // pthread_t thread_id2;
@@ -56,10 +71,13 @@ int main() {
     // watchdog = watchdog_create(logger, stop_cond);
     // logger_add_watchdog(logger, watchdog);
 
-    queue = queue_init(logger);
+    Queue* queue = queue_init(logger);
+    Queue* printer_queue = queue_init(logger);
     Reader* reader = reader_create("/proc/stat", queue, logger);
-    AnalyserData* analyser = analyser_create(queue, logger);
+    AnalyserData* analyser = analyser_create(queue, printer_queue, logger);
+    Printer* printer = printer_create(printer_queue, logger);
 
+    pthread_t printer_thread = printer_start(printer);
     pthread_t reader_thread = reader_start(reader);
     pthread_t analyser_thread = analyser_start(analyser);
     int counter = 0;
@@ -73,11 +91,6 @@ int main() {
         counter++;
         printf("Waiting ended %d\n", counter);
     }
-
-    reader->running = 0;
-    analyser_stop(analyser, analyser_thread);
-
-    pthread_join(reader_thread, NULL);
 
     // printf("Before Thread\n");
     // pthread_create(&thread_id, NULL, printing_thread, message_to_log);
@@ -104,9 +117,6 @@ int main() {
     clock_gettime(CLOCK_REALTIME, &timeout);
     timeout.tv_sec += 10;
 
-    reader_destroy(reader);
-    queue_destroy(queue);
-
     pthread_mutex_lock(&stop_mutex);
     int result = pthread_cond_timedwait(&stop_cond, &stop_mutex, &timeout);
     pthread_mutex_unlock(&stop_mutex);
@@ -114,7 +124,6 @@ int main() {
     pthread_cond_destroy(&stop_cond);
     pthread_mutex_destroy(&stop_mutex);
 
-    logger_destroy_thread(logger);
     // pthread_join(thread_id, NULL);
 
     return 0;
